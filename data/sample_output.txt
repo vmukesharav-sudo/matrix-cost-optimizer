@@ -1,0 +1,66 @@
+==============================================
+          MATRIX COST OPTIMIZER
+   Java Data Structures Mini Project
+==============================================
+
+--------------- MENU ----------------
+1. Enter matrices
+2. Display matrix dimensions
+3. Find minimum multiplication cost
+4. Display DP cost table
+5. Display algorithm complexity
+6. Load sample matrices
+7. Exit
+--------------------------------------
+Enter your choice: 
+Sample data loaded:
+
+Matrix Dimensions:
+  A1 = 10 x 30
+  A2 = 30 x 5
+  A3 = 5 x 60
+
+--------------- MENU ----------------
+1. Enter matrices
+2. Display matrix dimensions
+3. Find minimum multiplication cost
+4. Display DP cost table
+5. Display algorithm complexity
+6. Load sample matrices
+7. Exit
+--------------------------------------
+Enter your choice: 
+==============================================
+                 RESULT
+==============================================
+Minimum Scalar Multiplication Cost: 4500
+Optimal Multiplication Order: ((A1 × A2) × A3)
+==============================================
+
+--------------- MENU ----------------
+1. Enter matrices
+2. Display matrix dimensions
+3. Find minimum multiplication cost
+4. Display DP cost table
+5. Display algorithm complexity
+6. Load sample matrices
+7. Exit
+--------------------------------------
+Enter your choice: 
+Dynamic Programming Cost Table:
+            A1      A2      A3
+A1           0    1500    4500
+A2           -       0    9000
+A3           -       -       0
+
+--------------- MENU ----------------
+1. Enter matrices
+2. Display matrix dimensions
+3. Find minimum multiplication cost
+4. Display DP cost table
+5. Display algorithm complexity
+6. Load sample matrices
+7. Exit
+--------------------------------------
+Enter your choice: 
+Thank you for using Matrix Cost Optimizer!
