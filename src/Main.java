@@ -1,44 +1,77 @@
 import java.util.Scanner;
 
 public class Main {
-    private static final Scanner scanner = new Scanner(System.in);
-    private static Matrix[] matrices;
-    private static MatrixChain chain;
+
+    static Scanner scanner = new Scanner(System.in);
+
+    static Matrix[] matrices = null;
 
     public static void main(String[] args) {
-        printHeader();
 
-        boolean running = true;
-        while (running) {
-            printMenu();
-            int choice = readInt("Enter your choice: ");
+        int choice;
+
+        do {
+
+            showMenu();
+
+            System.out.print("Enter your choice: ");
+
+            choice = scanner.nextInt();
+            scanner.nextLine();
 
             switch (choice) {
-                case 1 -> enterMatrices();
-                case 2 -> displayMatrices();
-                case 3 -> optimize();
-                case 4 -> displayCostTable();
-                case 5 -> displayComplexity();
-                case 6 -> loadSample();
-                case 7 -> {
-                    System.out.println("\nThank you for using Matrix Cost Optimizer!");
-                    running = false;
-                }
-                default -> System.out.println("\nInvalid choice. Please select 1-7.");
+
+                case 1:
+                    enterMatrices();
+                    break;
+
+                case 2:
+                    displayDimensions();
+                    break;
+
+                case 3:
+                    findMinimumCost();
+                    break;
+
+                case 4:
+                    displayDPTable();
+                    break;
+
+                case 5:
+                    displayComplexity();
+                    break;
+
+                case 6:
+                    loadSampleMatrices();
+                    break;
+
+                case 7:
+                    System.out.println();
+                    System.out.println(
+                        "Thank you for using Matrix Cost Optimizer!"
+                    );
+                    break;
+
+                default:
+                    System.out.println();
+                    System.out.println(
+                        "Invalid choice! Please enter 1 to 7."
+                    );
             }
-        }
+
+        } while (choice != 7);
+
         scanner.close();
     }
 
-    private static void printHeader() {
-        System.out.println("==============================================");
-        System.out.println("          MATRIX COST OPTIMIZER");
-        System.out.println("   Java Data Structures Mini Project");
-        System.out.println("==============================================");
-    }
 
-    private static void printMenu() {
-        System.out.println("\n--------------- MENU ----------------");
+    // MENU
+    static void showMenu() {
+
+        System.out.println();
+        System.out.println("==========================================");
+        System.out.println("        MATRIX COST OPTIMIZER");
+        System.out.println("==========================================");
         System.out.println("1. Enter matrices");
         System.out.println("2. Display matrix dimensions");
         System.out.println("3. Find minimum multiplication cost");
@@ -46,138 +79,243 @@ public class Main {
         System.out.println("5. Display algorithm complexity");
         System.out.println("6. Load sample matrices");
         System.out.println("7. Exit");
-        System.out.println("--------------------------------------");
+        System.out.println("==========================================");
     }
 
-    private static void enterMatrices() {
-        int n;
-        do {
-            n = readInt("Enter number of matrices (1 or more): ");
-            if (n <= 0) {
-                System.out.println("Number of matrices must be positive.");
-            }
-        } while (n <= 0);
 
-        Matrix[] temp = new Matrix[n];
+    // OPTION 1
+    static void enterMatrices() {
+
+        System.out.println();
+        System.out.println("----- ENTER MATRICES -----");
+
+        System.out.print("Enter number of matrices: ");
+
+        int n = scanner.nextInt();
+        scanner.nextLine();
+
+        matrices = new Matrix[n];
 
         for (int i = 0; i < n; i++) {
-            System.out.println("\nEnter dimensions for A" + (i + 1));
-            int rows = readPositiveInt("Rows: ");
-            int columns = readPositiveInt("Columns: ");
 
-            if (i > 0 && temp[i - 1].getColumns() != rows) {
-                System.out.println("Invalid dimension. A" + i + " has "
-                    + temp[i - 1].getColumns()
-                    + " columns, so A" + (i + 1)
-                    + " must have " + temp[i - 1].getColumns() + " rows.");
-                System.out.println("Please restart matrix entry with compatible dimensions.");
-                return;
-            }
+            System.out.println();
+            System.out.println("Matrix A" + (i + 1));
 
-            temp[i] = new Matrix("A" + (i + 1), rows, columns);
+            System.out.print("Enter rows: ");
+            int rows = scanner.nextInt();
+
+            System.out.print("Enter columns: ");
+            int columns = scanner.nextInt();
+
+            scanner.nextLine();
+
+            matrices[i] =
+                new Matrix("A" + (i + 1), rows, columns);
         }
 
-        matrices = temp;
-        chain = new MatrixChain(matrices);
-        System.out.println("\nMatrices entered successfully.");
+        System.out.println();
+        System.out.println("Matrices entered successfully!");
     }
 
-    private static void loadSample() {
-        matrices = new Matrix[] {
-            new Matrix("A1", 10, 30),
-            new Matrix("A2", 30, 5),
-            new Matrix("A3", 5, 60)
-        };
-        chain = new MatrixChain(matrices);
 
-        System.out.println("\nSample data loaded:");
-        displayMatrices();
-    }
+    // OPTION 2
+    static void displayDimensions() {
 
-    private static void displayMatrices() {
-        if (!checkData()) return;
+        System.out.println();
+        System.out.println("----- MATRIX DIMENSIONS -----");
 
-        System.out.println("\nMatrix Dimensions:");
-        for (Matrix matrix : matrices) {
-            System.out.println("  " + matrix);
+        if (matrices == null) {
+
+            System.out.println(
+                "No matrices loaded!"
+            );
+
+            System.out.println(
+                "Please choose option 1 or option 6 first."
+            );
+
+            return;
         }
-    }
 
-    private static void optimize() {
-        if (!checkData()) return;
-
-        long minimumCost = chain.optimize();
-
-        System.out.println("\n==============================================");
-        System.out.println("                 RESULT");
-        System.out.println("==============================================");
-        System.out.println("Minimum Scalar Multiplication Cost: " + minimumCost);
-        System.out.println("Optimal Multiplication Order: " + chain.getOptimalOrder());
-        System.out.println("==============================================");
-    }
-
-    private static void displayCostTable() {
-        if (!checkData()) return;
-
-        chain.optimize();
-        long[][] table = chain.getCostTable();
-
-        System.out.println("\nDynamic Programming Cost Table:");
-        System.out.print("      ");
         for (int i = 0; i < matrices.length; i++) {
-            System.out.printf("%8s", "A" + (i + 1));
+
+            System.out.println(
+                matrices[i].name
+                + " = "
+                + matrices[i].rows
+                + " x "
+                + matrices[i].columns
+            );
         }
+    }
+
+
+    // OPTION 3
+    static void findMinimumCost() {
+
+        System.out.println();
+        System.out.println("----- MINIMUM MULTIPLICATION COST -----");
+
+        if (matrices == null) {
+
+            System.out.println(
+                "No matrices loaded!"
+            );
+
+            System.out.println(
+                "Please choose option 1 or option 6 first."
+            );
+
+            return;
+        }
+
+        if (!checkCompatibility()) {
+            return;
+        }
+
+        MatrixChain chain =
+            new MatrixChain(matrices);
+
+        long cost =
+            chain.findMinimumCost();
+
+        System.out.println(
+            "Minimum multiplication cost = "
+            + cost
+        );
+
+        System.out.println(
+            "Optimal order = "
+            + chain.getOptimalOrder()
+        );
+    }
+
+
+    // OPTION 4
+    static void displayDPTable() {
+
+        System.out.println();
+        System.out.println("----- DP COST TABLE -----");
+
+        if (matrices == null) {
+
+            System.out.println(
+                "No matrices loaded!"
+            );
+
+            System.out.println(
+                "Please choose option 1 or option 6 first."
+            );
+
+            return;
+        }
+
+        if (!checkCompatibility()) {
+            return;
+        }
+
+        MatrixChain chain =
+            new MatrixChain(matrices);
+
+        chain.findMinimumCost();
+
+        int n = matrices.length;
+
         System.out.println();
 
-        for (int i = 0; i < matrices.length; i++) {
-            System.out.printf("%-6s", "A" + (i + 1));
-            for (int j = 0; j < matrices.length; j++) {
+        for (int i = 0; i < n; i++) {
+
+            for (int j = 0; j < n; j++) {
+
                 if (j < i) {
-                    System.out.printf("%8s", "-");
+
+                    System.out.printf("%10s", "-");
+
                 } else {
-                    System.out.printf("%8d", table[i][j]);
+
+                    System.out.printf(
+                        "%10d",
+                        chain.dp[i][j]
+                    );
                 }
             }
+
             System.out.println();
         }
     }
 
-    private static void displayComplexity() {
-        System.out.println("\nAlgorithm Complexity");
-        System.out.println("---------------------");
-        System.out.println("Time Complexity : O(n^3)");
-        System.out.println("Space Complexity: O(n^2)");
-        System.out.println("Data Structures : 1D and 2D arrays");
-        System.out.println("Technique       : Dynamic Programming");
+
+    // OPTION 5
+    static void displayComplexity() {
+
+        System.out.println();
+        System.out.println("----- ALGORITHM COMPLEXITY -----");
+
+        System.out.println(
+            "Algorithm          : Matrix Chain Multiplication"
+        );
+
+        System.out.println(
+            "Technique          : Dynamic Programming"
+        );
+
+        System.out.println(
+            "Time Complexity    : O(n^3)"
+        );
+
+        System.out.println(
+            "Space Complexity   : O(n^2)"
+        );
     }
 
-    private static boolean checkData() {
-        if (matrices == null || chain == null) {
-            System.out.println("\nNo matrices available. Choose option 1 or 6 first.");
-            return false;
+
+    // OPTION 6
+    static void loadSampleMatrices() {
+
+        matrices = new Matrix[3];
+
+        matrices[0] =
+            new Matrix("A1", 10, 30);
+
+        matrices[1] =
+            new Matrix("A2", 30, 5);
+
+        matrices[2] =
+            new Matrix("A3", 5, 60);
+
+        System.out.println();
+        System.out.println(
+            "Sample matrices loaded successfully!"
+        );
+
+        displayDimensions();
+    }
+
+
+    // COMPATIBILITY CHECK
+    static boolean checkCompatibility() {
+
+        for (int i = 0; i < matrices.length - 1; i++) {
+
+            if (matrices[i].columns
+                    != matrices[i + 1].rows) {
+
+                System.out.println();
+                System.out.println(
+                    "Matrix multiplication is not possible."
+                );
+
+                System.out.println(
+                    matrices[i].name
+                    + " columns must equal "
+                    + matrices[i + 1].name
+                    + " rows."
+                );
+
+                return false;
+            }
         }
+
         return true;
-    }
-
-    private static int readPositiveInt(String message) {
-        int value;
-        do {
-            value = readInt(message);
-            if (value <= 0) {
-                System.out.println("Please enter a positive integer.");
-            }
-        } while (value <= 0);
-        return value;
-    }
-
-    private static int readInt(String message) {
-        while (true) {
-            System.out.print(message);
-            if (scanner.hasNextInt()) {
-                return scanner.nextInt();
-            }
-            System.out.println("Invalid input. Enter an integer.");
-            scanner.next();
-        }
     }
 }
